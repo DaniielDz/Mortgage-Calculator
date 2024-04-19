@@ -20,7 +20,7 @@ export function Graph({ data }) {
     // Retornar el componente LineChart con los datos correctos
     return (
         <LineChart
-            className="h-[300px] w-[500px]  flex flex-col items-center justify-center" // Altura del gráfico
+            className="lg:h-[300px] lg:w-[500px]  flex flex-col items-center justify-center" // Altura del gráfico
             data={chartdata} // Los datos que se visualizan en el gráfico
             index="year" // La propiedad que se usa como índice (año)
             categories={[

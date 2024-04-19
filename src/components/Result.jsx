@@ -4,15 +4,16 @@ function Result({ text, color, value }) {
 
     // Usa el color proporcionado como un estilo en línea para el `span`
     return (
-        <div className="text-right text-[15px] text-[#333]">
+        <div className="text-right text-sm sm:text-base text-[#333]">
             <p dangerouslySetInnerHTML={{ __html: text }}></p>
             <span
                 style={{ color: color }} // Aplica el color en línea
-                className="text-[26px] font-semibold"
+                className="font-semibold text-xl sm:text-2xl md:text-3xl"
             >
                 {valueFormatter(value)}
             </span>
         </div>
+
     );
 }
 

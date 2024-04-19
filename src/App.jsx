@@ -42,42 +42,44 @@ function App() {
     // Render de la aplicación
     return (
         <>
-            <main className='flex flex-col gap-3 max-w-4xl m-auto'>
-                <h1 className='mb-2 text-4xl text-left'>Mortgage Calculator</h1>
-                <div className='w-full h-max flex bg-white'>
-                    <aside className='text-left h-full w-full max-w-[33%] p-7 border-r border-r-[#ccc]'>
-                        <div>
-                            <p className='text-[15px]'>Enter your details below to estimate your monthly mortgage payment with taxes, fees and insurance.</p>
+        <main className='flex flex-col gap-3 max-w-4xl m-auto p-4 lg:p-8'>
+            <h1 className='mb-2 text-4xl text-left'>Mortgage Calculator</h1>
+            <div className='flex flex-col lg:flex-row w-full h-max bg-white'>
+                {/* Cambios para hacer el aside responsive */}
+                <aside className='text-left w-full lg:max-w-1/3 p-4 border-r lg:border-r-[#ccc] border-b lg:border-b-0'>
+                    <div>
+                        <p className='text-[15px]'>Enter your details below to estimate your monthly mortgage payment with taxes, fees, and insurance.</p>
+                    </div>
+                    <h3 className='mt-6 mb-1 text-lg font-semibold'>Edit Your Mortgage Details</h3>
+                    <form className='flex flex-col gap-2'>
+                        {/* Usando DollarInput para campos de dólares */}
+                        <DollarInput title='Home Price' value={homePrice} onChange={setHomePrice} maxValue={10000000} minValue={10000} />
+                        <DollarInput title='Down Payment' value={downPayment} onChange={setDownPayment} maxValue={10000000} />
+                        <PercentageInput title='Mortgage Interest Rate' value={interestRate} onChange={setInterestRate} max={12} />
+                        <div className='flex flex-col'>
+                            <select id="select" className="select w-full rounded-md border border-[#ccc] p-2" onChange={(e) => setLoanTerm(parseInt(e.target.value, 10))}>
+                                <option value="30">30-Year Fixed</option>
+                                <option value="15">15-Year Fixed</option>
+                            </select>
                         </div>
-                        <h3 className='mt-6 mb-1 text-lg font-semibold'>Edit Your Mortgage Details</h3>
-                        <form className='flex flex-col gap-2'>
-                            {/* Usando DollarInput para campos de dólares */}
-                            <DollarInput title='Home Price' value={homePrice} onChange={setHomePrice} maxValue={10000000} minValue={10000} />
-                            <DollarInput title='Down Payment' value={downPayment} onChange={setDownPayment} maxValue={10000000} />
-                            <PercentageInput title='Mortgage Interest Rate' value={interestRate} onChange={setInterestRate} max={12} />
-                            <div className='flex flex-col'>
-                                <select id="select" className="select" onChange={(e) => setLoanTerm(parseInt(e.target.value, 10))}>
-                                    <option value="30">30-Year Fixed</option>
-                                    <option value="15">15-Year Fixed</option>
-                                </select>
-                            </div>
-                            <PercentageInput title='Annual Property Tax' value={annualPropertyTax} onChange={setAnnualPropertyTax} max={5} />
-                            <DollarInput title='Annual Homeowners Insurance' value={annualInsurance} onChange={setAnnualInsurance} maxValue={15000} />
-                            <DollarInput title='Monthly HOA/Condo Fees' value={monthlyHOAFees} onChange={setMonthlyHOAFees} maxValue={13000} />
-                        </form>
-                    </aside>
-                    <div className='w-full h-full text-center'>
-                        {/* TabComponent con el manejador de cambio de tab */}
-                        <TabComponent onTabChange={(index) => setSelectedTab(index)} />
-
-                        <h2 className='mt-12 mb-1 text-2xl font-bold'>Total Monthly Payment Breakdown</h2>
-                        <p className='text-lg'>Based on a <span>{valueFormatter(homePrice - downPayment)}</span> mortgage</p>
-                        
-                        {/* Section One */}
-                        {selectedTab === 0 && (
-                            <section id="sectionOne">
-                              {showResults && (
-                                <div className='w-full h-[350px] flex items-center justify-evenly'>
+                        <PercentageInput title='Annual Property Tax' value={annualPropertyTax} onChange={setAnnualPropertyTax} max={5} />
+                        <DollarInput title='Annual Homeowners Insurance' value={annualInsurance} onChange={setAnnualInsurance} maxValue={15000} />
+                        <DollarInput title='Monthly HOA/Condo Fees' value={monthlyHOAFees} onChange={setMonthlyHOAFees} maxValue={13000} />
+                    </form>
+                </aside>
+                {/* Div principal con flex-col en dispositivos móviles */}
+                <div className='w-full lg:w-2/3 h-full text-center'>
+                    {/* TabComponent con el manejador de cambio de tab */}
+                    <TabComponent onTabChange={(index) => setSelectedTab(index)} />
+    
+                    <h2 className='mt-12 mb-1 text-2xl font-bold'>Total Monthly Payment Breakdown</h2>
+                    <p className='text-lg'>Based on a <span>{valueFormatter(homePrice - downPayment)}</span> mortgage</p>
+    
+                    {/* Section One */}
+                    {selectedTab === 0 && (
+                        <section id="sectionOne">
+                            {showResults && (
+                                <div className='w-full h-[350px] px-3 flex lg:flex-row justify-center lg:justify-evenly items-center'>
                                     <div className='flex flex-col gap-6'>
                                         <Result 
                                             text={"Taxes & <br />Other Fees"}
@@ -90,18 +92,20 @@ function App() {
                                             value={results.monthlyInsurance}
                                         />
                                     </div>
-                                    <div className='w-[200px]'>
+                                    <div className='flex justify-center w-full lg:w-[200px]'>
                                         <DonutGraph 
                                             monthlyPayment={results.monthlyPayment}
                                             monthlyPropertyTax={results.monthlyPropertyTax}
                                             monthlyInsurance={results.monthlyInsurance}
                                         />
                                     </div>
-                                    <Result 
-                                        text={"Mortgage<br/>Payment (P&amp;I)"}
-                                        color={"#54ba6c"}
-                                        value={results.monthlyPayment}
-                                    />
+                                    <div className='flex flex-col gap-6'>
+                                        <Result 
+                                            text={"Mortgage<br/>Payment (P&amp;I)"}
+                                            color={"#54ba6c"}
+                                            value={results.monthlyPayment}
+                                        />
+                                    </div>
                                 </div>
                             )}
                             {showResults === false && (
@@ -113,24 +117,25 @@ function App() {
                                     monthlyHOAFees={monthlyHOAFees}
                                 />
                             )}
-
+    
                             <div className="w-full h-[60px]"> 
                               {/* Pasa onTabChange a ColorToggleButton */}
                               <ColorToggleButton onTabChange={(index) => setShowResults(index === 0)} />
                             </div>
-                          </section>
-                        )}
-
-                        {/* Section Two */}
-                        {selectedTab === 1 && (
-                            <section id='sectionTwo' className='flex flex-col items-center justify-center mt-12'>
-                                <Graph data={results.annualMortgageData} />
-                            </section>
-                        )}
-                    </div>
+                        </section>
+                    )}
+    
+                    {/* Section Two */}
+                    {selectedTab === 1 && (
+                        <section id='sectionTwo' className='flex flex-col items-center justify-center mt-12'>
+                            <Graph data={results.annualMortgageData} />
+                        </section>
+                    )}
                 </div>
-            </main>
-        </>
+            </div>
+        </main>
+    </>
+    
     );
 }
 
