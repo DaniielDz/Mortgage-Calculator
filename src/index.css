@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+    font-family: "Roboto", sans-serif !important; 
+}
+.mortgage-calc-charts-tab::after {
+    content: "";
+    width: 75%;
+    max-width: 150px;
+    height: 2px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #20a7e2;
+}
+select {
+    width: 100%; /* Ancho del select */
+    padding: 0.2rem 0.5rem; /* Espaciado interno */
+    border-radius: 0.375rem; /* Bordes redondeados */
+    border: 1px solid #ccc; /* Borde de color gris claro */
+    color: #333; /* Color de texto */
+    font-size: 1rem; /* Tamaño de fuente */
+    outline: none; /* Elimina el resalte al enfocarse */
+}
+
+/* Estilos para el contenedor de pestañas */
+.tabs-container {
+    margin: 20px;
+}
+
+/* Estilos para la lista de pestañas */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Estilos para cada pestaña */
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    margin-right: 5px;
+}
+
+/* Estilos para la pestaña activa */
+.tab.active {
+    background-color: #00A86B; /* Color de la pestaña activa */
+    color: white;
+}
+
+/* Estilos para el contenido de la sección */
+.content {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+
