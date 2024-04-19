@@ -1,18 +1,18 @@
 import { DonutChart } from '@tremor/react';
 
-export function DonutChartUsageExampleWithCustomColors({ M, totalTarifas, CMS }) {
+export function DonutGraph({ monthlyPayment, monthlyPropertyTax, monthlyInsurance }) {
   const sales = [
     {
       name: 'Mortgage Payment (P&I)',
-      sales: M,
+      sales: monthlyPayment,
     },
     {
       name: 'Home Insurance',
-      sales: CMS,
+      sales: monthlyInsurance,
     },
     {
       name: 'Taxes & Other Fees',
-      sales: totalTarifas,
+      sales: monthlyPropertyTax,
     }
   ];
 
@@ -30,6 +30,7 @@ export function DonutChartUsageExampleWithCustomColors({ M, totalTarifas, CMS })
       ]}
       className='text-4xl font-normal text-[#333] h-[200px] w-[200px]'
       valueFormatter={valueFormatter}
+      showAnimation={true}
     />
   );
 }

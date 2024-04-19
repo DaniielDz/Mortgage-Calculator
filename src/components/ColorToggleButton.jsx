@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 function ColorToggleButton({ onTabChange }) {
     // Estado para rastrear la pestaña activa (0 o 1)
@@ -13,20 +13,20 @@ function ColorToggleButton({ onTabChange }) {
 
     return (
         <div className="tabs-container">
-            <div className="tabs">
+            <div className="tabs cursor-pointer">
                 {/* Pestaña 1 */}
                 <div
-                    className={`tab ${activeTab === 0 ? 'active' : ''}`}
+                    className={`tab rounded-l-full border border-[#ccc] border-r-0 ${activeTab === 0 ? 'active' : ''}`}
                     onClick={() => handleTabChange(0)}
                 >
-                    Tab 1
+                    Overview
                 </div>
                 {/* Pestaña 2 */}
                 <div
-                    className={`tab ${activeTab === 1 ? 'active' : ''}`}
+                    className={`tab rounded-r-full border border-[#ccc] border-l-0 ${activeTab === 1 ? 'active' : ''}`}
                     onClick={() => handleTabChange(1)}
                 >
-                    Tab 2
+                    Details
                 </div>
             </div>
         </div>

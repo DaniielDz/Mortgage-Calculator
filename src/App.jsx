@@ -1,48 +1,45 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ColorToggleButton from './components/ColorToggleButton';
 import TabComponent from './components/Tab';
-import { DonutChartUsageExampleWithCustomColors } from './components/Dunut';
+import { DonutGraph } from './components/DonutGraph';
 import Result from './components/Result';
 import DollarInput from './components/DollarInput';
 import PercentageInput from './components/PercentageInput';
 import MortgageCalcBreakdownDetails from './components/MortgageCalcBreakdownDetails';
+import { Graph } from './components/Graph';
 import './index.css';
-import { Tab } from '@chakra-ui/react';
+import { calculateMortgage } from './Helpers/index';
 
 function App() {
     // Crear estados para los valores de entrada
-    const [PV, setPV] = useState(200000);
-    const [D, setD] = useState(40000);
-    const [IA, setIA] = useState(2.00);
-    const [TP, setTP] = useState(30);
-    const [ImpuestoAnual, setImpuestoAnual] = useState(2);
-    const [seguroAnual, setSeguroAnual] = useState(200);
-    const [HOAyCondominios, setHOAyCondominios] = useState(0);
+    const [homePrice, setHomePrice] = useState(200000);
+    const [downPayment, setDownPayment] = useState(40000);
+    const [interestRate, setInterestRate] = useState(2.00);
+    const [loanTerm, setLoanTerm] = useState(30);
+    const [annualPropertyTax, setAnnualPropertyTax] = useState(2);
+    const [annualInsurance, setAnnualInsurance] = useState(200);
+    const [monthlyHOAFees, setMonthlyHOAFees] = useState(0);
     
     // Estado para controlar la visibilidad de la sección de resultados
     const [showResults, setShowResults] = useState(true);
+    // Estado para controlar el tab seleccionado
+    const [selectedTab, setSelectedTab] = useState(0);
+    const [mortgageOverTimeData, setMortgageOverTimeData] = useState([]);
+    
+    useEffect(() => {
+        // Llama a la función `calculateMortgage` y actualiza el estado de `mortgageOverTimeData`
+        const mortgageOverTime = calculateMortgage(homePrice, downPayment, interestRate, loanTerm, annualPropertyTax, annualInsurance, monthlyHOAFees);
+        setMortgageOverTimeData(mortgageOverTime);
+    }, [homePrice, downPayment, interestRate, loanTerm, annualPropertyTax, annualInsurance, monthlyHOAFees]);
+    
+    
+    const valueFormatter = (number) => `$${Intl.NumberFormat('us').format(number).toString()}`;
 
-    // Función para operar
-    function operar(PV, D, IA, TP, ImpuestoAnual, seguroAnual, HOAyCondominios) {
-        const P = PV - D;
-        const IM = (IA / 100) / 12;
-        const n = TP * 12;
+    // Llamar a la función y obtener los resultados
+    const results = mortgageOverTimeData;
 
-        const IAP = PV * (ImpuestoAnual / 100);
-        const CMI = (IAP / 12);
 
-        const M = Math.round(P * ((IM * (1 + IM)**n) / ((1 + IM)**n - 1)));
-        const CMS = Math.round((seguroAnual / 12));
-        const totalTarifas = Math.round(CMI + HOAyCondominios);
-
-        return { P, M, CMS, totalTarifas };
-    }
-
-    const { P, M, CMS, totalTarifas } = operar(PV, D, IA, TP, ImpuestoAnual, seguroAnual, HOAyCondominios);
-
-    const valueFormatter = (number) =>
-        `$${Intl.NumberFormat('us').format(number).toString()}`;
-
+    // Render de la aplicación
     return (
         <>
             <main className='flex flex-col gap-3 max-w-4xl m-auto'>
@@ -55,70 +52,81 @@ function App() {
                         <h3 className='mt-6 mb-1 text-lg font-semibold'>Edit Your Mortgage Details</h3>
                         <form className='flex flex-col gap-2'>
                             {/* Usando DollarInput para campos de dólares */}
-                            <DollarInput title='Home Price' value={PV} onChange={setPV} maxValue={10000000} minValue={10000} />
-                            <DollarInput title='Down Payment' value={D} onChange={setD} maxValue={10000000} />
-                            <PercentageInput title='Mortgage Interest Rate' value={IA} onChange={setIA} max={12} />
+                            <DollarInput title='Home Price' value={homePrice} onChange={setHomePrice} maxValue={10000000} minValue={10000} />
+                            <DollarInput title='Down Payment' value={downPayment} onChange={setDownPayment} maxValue={10000000} />
+                            <PercentageInput title='Mortgage Interest Rate' value={interestRate} onChange={setInterestRate} max={12} />
                             <div className='flex flex-col'>
-                                <select id="select" className="select" onChange={(e) => setTP(parseInt(e.target.value, 10))}>
+                                <select id="select" className="select" onChange={(e) => setLoanTerm(parseInt(e.target.value, 10))}>
                                     <option value="30">30-Year Fixed</option>
                                     <option value="15">15-Year Fixed</option>
                                 </select>
                             </div>
-                            <PercentageInput title='Annual Property Tax' value={ImpuestoAnual} onChange={setImpuestoAnual} max={5} />
-                            <DollarInput title='Annual Homeowners Insurance' value={seguroAnual} onChange={setSeguroAnual} maxValue={15000} />
-                            <DollarInput title='Monthly HOA/Condo Fees' value={HOAyCondominios} onChange={setHOAyCondominios} maxValue={13000} />
+                            <PercentageInput title='Annual Property Tax' value={annualPropertyTax} onChange={setAnnualPropertyTax} max={5} />
+                            <DollarInput title='Annual Homeowners Insurance' value={annualInsurance} onChange={setAnnualInsurance} maxValue={15000} />
+                            <DollarInput title='Monthly HOA/Condo Fees' value={monthlyHOAFees} onChange={setMonthlyHOAFees} maxValue={13000} />
                         </form>
                     </aside>
                     <div className='w-full h-full text-center'>
-                      <TabComponent />
+                        {/* TabComponent con el manejador de cambio de tab */}
+                        <TabComponent onTabChange={(index) => setSelectedTab(index)} />
 
                         <h2 className='mt-12 mb-1 text-2xl font-bold'>Total Monthly Payment Breakdown</h2>
-                        <p className='text-lg'>Based on a <span>{valueFormatter(P)}</span> mortgage</p>
+                        <p className='text-lg'>Based on a <span>{valueFormatter(homePrice - downPayment)}</span> mortgage</p>
                         
-
-                        {/* Muestra de resultados primera sección */}
-                        {showResults && (
-                            <div className='w-full h-[350px] flex items-center justify-evenly'>
-                                <div className='flex flex-col gap-6'>
+                        {/* Section One */}
+                        {selectedTab === 0 && (
+                            <section id="sectionOne">
+                              {showResults && (
+                                <div className='w-full h-[350px] flex items-center justify-evenly'>
+                                    <div className='flex flex-col gap-6'>
+                                        <Result 
+                                            text={"Taxes & <br />Other Fees"}
+                                            color={"#fccd03"}
+                                            value={results.monthlyPropertyTax}
+                                        />
+                                        <Result 
+                                            text={"Home <br />Insurance"}
+                                            color={"#ef840f"}
+                                            value={results.monthlyInsurance}
+                                        />
+                                    </div>
+                                    <div className='w-[200px]'>
+                                        <DonutGraph 
+                                            monthlyPayment={results.monthlyPayment}
+                                            monthlyPropertyTax={results.monthlyPropertyTax}
+                                            monthlyInsurance={results.monthlyInsurance}
+                                        />
+                                    </div>
                                     <Result 
-                                        text={"Taxes & <br />Other Fees"}
-                                        color={"#fccd03"}
-                                        value={totalTarifas}
-                                    />
-                                    <Result 
-                                        text={"Home <br />Insurance"}
-                                        color={"#ef840f"}
-                                        value={CMS}
+                                        text={"Mortgage<br/>Payment (P&amp;I)"}
+                                        color={"#54ba6c"}
+                                        value={results.monthlyPayment}
                                     />
                                 </div>
-                                <div className='w-[200px]'>
-                                    <DonutChartUsageExampleWithCustomColors 
-                                        M={M}
-                                        totalTarifas={totalTarifas}
-                                        CMS={CMS}    
-                                    />
-                                </div>
-                                <Result 
-                                    text={"Mortgage<br/>Payment (P&amp;I)"}
-                                    color={"#54ba6c"}
-                                    value={M}
+                            )}
+                            {showResults === false && (
+                                <MortgageCalcBreakdownDetails
+                                    monthlyPayment={results.monthlyPayment}
+                                    monthlyPropertyTax={results.monthlyPropertyTax}
+                                    monthlyInsurance={results.monthlyInsurance}
+                                    totalMonthlyPayment={results.monthlyPayment + results.monthlyPropertyTax + results.monthlyInsurance}
+                                    monthlyHOAFees={monthlyHOAFees}
                                 />
+                            )}
+
+                            <div className="w-full h-[60px]"> 
+                              {/* Pasa onTabChange a ColorToggleButton */}
+                              <ColorToggleButton onTabChange={(index) => setShowResults(index === 0)} />
                             </div>
+                          </section>
                         )}
 
-                        {/* Muestra MortgageCalcBreakdownDetails solo si selectedTab es igual a 1 */}
-                        {showResults === false && (
-                            <MortgageCalcBreakdownDetails
-                                M={M}
-                                CMS={CMS}
-                                totalTarifas={totalTarifas}
-                                totalMonthlyPayment={M + CMS + totalTarifas}
-                            />
+                        {/* Section Two */}
+                        {selectedTab === 1 && (
+                            <section id='sectionTwo' className='flex flex-col items-center justify-center mt-12'>
+                                <Graph data={results.annualMortgageData} />
+                            </section>
                         )}
-                        <div className="w-full h-[60px]"> 
-                            {/* Pasa onTabChange a ColorToggleButton */}
-                            <ColorToggleButton onTabChange={(index) => setShowResults(index === 0)} />
-                        </div>
                     </div>
                 </div>
             </main>
