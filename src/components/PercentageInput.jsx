@@ -3,24 +3,45 @@ import { useState } from 'react';
 function PercentageInput({ title, value, onChange, max = 12 }) {
     const minPercentage = 0;
 
-    // Estados locales para el valor del input y los mensajes de error
-    const [inputValue, setInputValue] = useState(value.toFixed(2));
+    // Estado local para el valor del input y el mensaje de error
+    const [inputValue, setInputValue] = useState(value !== 0 ? value.toFixed(2) : '');
     const [errorMessage, setErrorMessage] = useState('');
 
     // Maneja los cambios del input
     const handleChange = (event) => {
-        const targetValue = event.target.value;
+        let targetValue = event.target.value;
+
+        // Si el valor ingresado es vacío, actualiza el estado local y limpia el mensaje de error
+        if (targetValue === '') {
+            setInputValue('');
+            setErrorMessage('');
+            return;
+        }
+
+        // Si el primer número ingresado es menor o igual a 1, permitimos escribir otro número antes de agregar el punto
+        if (targetValue.length === 1 && parseInt(targetValue) <= 1) {
+            setInputValue(targetValue);
+            return;
+        }
+
+        // Si el primer número ingresado es mayor que 1, agregamos el punto automáticamente
+        if (targetValue.length === 1) {
+            targetValue += '.';
+        }
+
+        // Formateamos el valor para permitir solo dos números después del punto
+        const formattedValue = formatValue(targetValue);
+
+        // Actualizamos el estado local con el nuevo valor
+        setInputValue(formattedValue);
 
         // Intenta convertir el valor a un número flotante
-        const floatValue = parseFloat(targetValue);
+        const floatValue = parseFloat(formattedValue);
 
         // Verifica si el valor es válido
         if (!isNaN(floatValue)) {
             // Verifica si el valor está dentro del rango permitido
             if (floatValue >= minPercentage && floatValue <= max) {
-                // Si el valor es válido, formatea el número a dos decimales y actualiza el input
-                const formattedValue = floatValue.toFixed(2);
-                setInputValue(formattedValue);
                 onChange(floatValue);
                 setErrorMessage('');
             } else {
@@ -33,13 +54,22 @@ function PercentageInput({ title, value, onChange, max = 12 }) {
         }
     };
 
+    // Función para formatear el valor y permitir solo dos números después del punto decimal
+    const formatValue = (value) => {
+        const parts = value.split('.');
+        const integerPart = parts[0];
+        let decimalPart = parts[1] || '';
+        decimalPart = decimalPart.slice(0, 2); // Permitimos solo dos números después del punto
+        return integerPart + '.' + decimalPart;
+    };
+
     return (
         <div className='flex flex-col text-left gap-2 justify-center'>
             <span className='w-max border-b border-dotted border-b-[#09926a]'>{title}</span>
             <span className='w-max pr-3 pl-3 border border-solid border-[#ccc] rounded-md text-[15px] after:content-["%"] after:ml-1'>
                 <input
                     type="text"
-                    className='w-9 px-2 py-1 outline-none border-none text-right' // Ajusta el ancho del input
+                    className='w-12 px-2 py-1 outline-none border-none text-right' // Ajusta el ancho del input
                     value={inputValue}
                     onChange={handleChange}
                 />
