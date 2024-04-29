@@ -43,7 +43,7 @@ function App() {
     return (
         <>
         <main className='flex flex-col gap-3 max-w-4xl m-auto p-4 lg:p-8'>
-            <h1 className='mb-2 text-4xl text-left'>Mortgage Calculator</h1>
+            <h1 className='mb-2 text-4xl text-left animate__animated animate__lightSpeedInLeft'>Mortgage Calculator</h1>
             <div className='flex flex-col lg:flex-row w-full h-max bg-white'>
                 {/* Cambios para hacer el aside responsive */}
                 <aside className='text-left w-full lg:max-w-1/3 p-4 border-r lg:border-r-[#ccc] border-b lg:border-b-0'>
@@ -84,7 +84,7 @@ function App() {
                                         <Result 
                                             text={"Taxes & <br />Other Fees"}
                                             color={"#fccd03"}
-                                            value={results.monthlyPropertyTax}
+                                            value={results.monthlyPropertyTax + monthlyHOAFees}
                                         />
                                         <Result 
                                             text={"Home <br />Insurance"}
@@ -95,7 +95,7 @@ function App() {
                                     <div className='flex justify-center w-full lg:w-[200px]'>
                                         <DonutGraph 
                                             monthlyPayment={results.monthlyPayment}
-                                            monthlyPropertyTax={results.monthlyPropertyTax}
+                                            monthlyPropertyTax={results.monthlyPropertyTax + monthlyHOAFees}
                                             monthlyInsurance={results.monthlyInsurance}
                                         />
                                     </div>
@@ -113,7 +113,7 @@ function App() {
                                     monthlyPayment={results.monthlyPayment}
                                     monthlyPropertyTax={results.monthlyPropertyTax}
                                     monthlyInsurance={results.monthlyInsurance}
-                                    totalMonthlyPayment={results.monthlyPayment + results.monthlyPropertyTax + results.monthlyInsurance}
+                                    totalMonthlyPayment={results.monthlyPayment + results.monthlyPropertyTax + results.monthlyInsurance + monthlyHOAFees}
                                     monthlyHOAFees={monthlyHOAFees}
                                 />
                             )}

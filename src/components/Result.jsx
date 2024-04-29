@@ -1,6 +1,6 @@
 function Result({ text, color, value }) {
     // Función para formatear el valor a moneda
-    const valueFormatter = (number) => `$${Intl.NumberFormat('us').format(number).toString()}`;
+    const valueFormatter = (number) => `$${Intl.NumberFormat('us').format(Math.round(number)).toString()}`;
 
     // Usa el color proporcionado como un estilo en línea para el `span`
     return (

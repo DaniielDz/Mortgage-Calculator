@@ -8,7 +8,7 @@ export function calculateMortgage(homePrice, downPayment, interestRate, loanTerm
     const monthlyPayment = principal * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, totalMonths)) / (Math.pow(1 + monthlyInterestRate, totalMonths) - 1);
 
     // Calculate monthly property tax and insurance
-    const monthlyPropertyTax = (annualPropertyTax / 100 * homePrice) / 12; // Monthly property tax
+    const monthlyPropertyTax = ((annualPropertyTax / 100 )* homePrice) / 12; // Monthly property tax
     const monthlyInsurance = annualInsurance / 12; // Monthly homeowners insurance
     const monthlyFees = monthlyHOAFees; // Monthly HOA or condo fees
 
@@ -57,10 +57,10 @@ export function calculateMortgage(homePrice, downPayment, interestRate, loanTerm
 
     // Return the final results of the mortgage and annual data
     return {
-        monthlyPayment: Math.round(monthlyPayment),
-        monthlyPropertyTax: Math.round(monthlyPropertyTax),
-        monthlyInsurance: Math.round(monthlyInsurance),
-        monthlyFees: Math.round(monthlyFees),
+        monthlyPayment: monthlyPayment,
+        monthlyPropertyTax: monthlyPropertyTax,
+        monthlyInsurance: monthlyInsurance,
+        monthlyFees: monthlyFees,
         annualMortgageData: annualMortgageData
     };
 }
